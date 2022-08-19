@@ -1,47 +1,80 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <Header title="Maersk Confessions" :ip="state.ip"></Header>
+  <div id="app-container">
+    <router-view />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script setup lang="ts">
+import Header from "@/components/Header.vue";
+import { getIp } from "@/utilities/utilities";
+import { onMounted, reactive } from 'vue'
+
+const state = reactive({ ip: '' })
+
+onMounted(async () => {
+  console.log(`the component is now mounted.`)
+  state.ip = await getIp()
+})
+</script>
+
+<style>
+@font-face {
+  font-family: "Comic";
+  src: local("Comic"), url(./assets/Comic.otf) format("opentype");
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+#app-container {
+  margin: 20px auto;
+  max-width: 1200px;
+  /* border: purple solid 10px; */
+  font-weight: normal;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+body {
+  font-family: "Comic";
+  font-size: 18pt;
+  color: white;
+  background-color: #00243d;
+  min-height: 100vh;
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.small-text {
+  font-size: 15pt;
+  color: rgb(168, 191, 226);
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.medium-text {
+  font-size: 20pt;
+}
+
+.large-text {
+  font-size: 30pt;
+}
+
+button {
+  font-size: 20pt;
+  padding: 5px 20px;
+  border-radius: 5px;
+  color: #222222;
+  transition: all 0.1s;
+}
+
+button:hover {
+  background-color: rgb(186, 205, 226);
+}
+
+button:active {
+  background-color: rgb(137, 149, 165);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: none;
 }
 </style>
