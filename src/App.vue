@@ -1,20 +1,30 @@
 <template>
-  <Header title="Maersk Confessions" :ip="state.ip"></Header>
+  <Header title="Maersk Confessions" :ip="ip"></Header>
   <div id="app-container">
     <router-view />
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import Header from "@/components/Header.vue";
 import { getIp } from "@/utilities/utilities";
-import { onMounted, reactive } from 'vue'
+import { defineComponent, onMounted, reactive } from 'vue'
 
-const state = reactive({ ip: '' })
-
-onMounted(async () => {
-  console.log(`the component is now mounted.`)
-  state.ip = await getIp()
+export default defineComponent({
+  name: "app",
+  components: {
+    Header
+  },
+  data() {
+    const ip: string = "";
+    return {
+      ip
+    }
+  },
+  async mounted() {
+    console.log(`the component is now mounted.`);
+    this.ip = await getIp()
+  }
 })
 </script>
 

@@ -1,4 +1,4 @@
-export async function getIp() {
+export async function getIp(): Promise<string> {
   return httpGet("https://api.ipify.org?format=json").then((x) => x.ip);
 }
 

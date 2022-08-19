@@ -13,13 +13,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { def } from "@vue/shared";
+import { defineComponent } from "vue";
 import MaerskIcon from "../assets/icons/IconMaersk.vue";
 
-const props = defineProps({
-  title: String,
-  ip: String 
-})
+export default defineComponent({
+  components: {
+    MaerskIcon
+  },
+  props: {
+    title: String,
+    ip: String
+  }
+}
+)
 </script>
 
 <style scoped>
