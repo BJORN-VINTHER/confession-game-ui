@@ -6,25 +6,34 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import { sleep } from "@/utilities/utilities";
-// import { service } from "../service/service";
+import { service } from "../service/service";
+import MaerskIcon from "../assets/icons/IconMaersk.vue";
+import { defineComponent } from "vue";
 
-async function onCreateGame() {
-  // const inviteCode = await service.createGame();
-  // this.$router.push({ path: `/games/${inviteCode}/lobby` });
-}
-
-async function onCreateTestGame() {
-  // const inviteCode = await service.createTestGame();
-  // this.$router.push({ path: `/games/${inviteCode}/lobby` });
-}
-
-async function joinTestGame() {
-  // const inviteCode = await service.joinTestGame();
-  // await sleep(1000);
-  // this.$router.push({ path: `/games/${inviteCode}` });
-}
+export default defineComponent({
+  components: {
+    MaerskIcon
+  },
+  props: {
+    title: String,
+    ip: String
+  },
+  methods: {
+    async onCreateGame() {
+      const inviteCode = await service.createGame();
+      this.$router.push({ path: `/games/${inviteCode}/lobby` });
+    },
+    onCreateTestGame() {
+      // const inviteCode = await service.createTestGame();
+      // this.$router.push({ path: `/games/${inviteCode}/lobby` });
+    },
+    joinTestGame() {
+      // const inviteCode = await service.joinTestGame();
+      // await sleep(1000);
+      // this.$router.push({ path: `/games/${inviteCode}` });
+    }
+  }
+})
 </script>
-
-<style></style>
