@@ -7,11 +7,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "home",
     component: HomeView,
   },
-  // {
-  //   path: "/games/:gameId/lobby",
-  //   name: "lobby",
-  //   component: () => import("../views/LobbyView.vue"),
-  // },
+  {
+    path: "/games/:gameId/lobby",
+    name: "lobby",
+    component: () => import("../views/LobbyView.vue"),
+  },
   // {
   //   path: "/games/:gameId/overview",
   //   name: "game",

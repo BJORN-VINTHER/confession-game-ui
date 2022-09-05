@@ -4,8 +4,8 @@ import type { CreateGameResult, GameState, Player, PlayerScore, Question, Questi
 
 class Service {
     public baseUrl: string = "http://localhost:4000";
-    public ip?: string;
-    public io?: ServiceSocket;
+    public ip!: string;
+    public io!: ServiceSocket;
 
     constructor() {
         this.init();
@@ -26,14 +26,14 @@ class Service {
 
     async createGame() {
         const result = await httpPost(this.baseUrl + "/game", { ip: this.ip }) as CreateGameResult;
-        console.log("Created game: " + result.inviteCode);
-        return result.inviteCode;
+        console.log("Created game: " + result.gameId);
+        return result.gameId;
     }
 
     async createTestGame() {
         const result = await httpPost(this.baseUrl + "/testGameHost", { ip: this.ip }) as CreateGameResult;
-        console.log("Created test game: " + result.inviteCode);
-        return result.inviteCode;
+        console.log("Created test game: " + result.gameId);
+        return result.gameId;
     }
 
     async joinGame(inviteCode: string, userName: string, ip: string) {

@@ -22,8 +22,8 @@ export default defineComponent({
   },
   methods: {
     async onCreateGame() {
-      const inviteCode = await service.createGame();
-      this.$router.push({ path: `/games/${inviteCode}/lobby` });
+      const gameId = await service.createGame();
+      this.$router.push({ path: `/games/${gameId}/lobby` });
     },
     onCreateTestGame() {
       // const inviteCode = await service.createTestGame();

@@ -34,10 +34,11 @@ export interface Answer {
 }
 
 export interface CreateGameResult {
-    inviteCode: string
+    gameId: string
 }
 
 export interface Player {
-    playerIP: string,
-    playerName: string,
+    ip: string,
+    username: string,
+    gifUrl: string
 }
