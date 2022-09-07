@@ -23,7 +23,7 @@ export default defineComponent({
   methods: {
     async onCreateGame() {
       const gameId = await service.createGame();
-      await service.joinGame(gameId);
+      // await service.joinGame(gameId);
       this.$router.push({ path: `/games/${gameId}/lobby` });
     },
     async onTestConnection() {

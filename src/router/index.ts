@@ -12,11 +12,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "lobby",
     component: () => import("../views/LobbyView.vue"),
   },
-  // {
-  //   path: "/games/:gameId/overview",
-  //   name: "game",
-  //   component: () => import("../views/HostView.vue"),
-  // },
+  {
+    path: "/games/:gameId/overview",
+    name: "game",
+    component: () => import("../views/HostView.vue"),
+  },
   // {
   //   path: "/games/:gameId/join",
   //   name: "join",

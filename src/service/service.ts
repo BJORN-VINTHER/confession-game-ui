@@ -37,11 +37,11 @@ class Service implements IService {
         console.log("Joined game: " + gameId);
     }
     
-    // async getGameState(gameId: string) {
-    //     const state = await httpPost(this.baseUrl + "/getGameState", { inviteCode: gameId }) as GameState;
-    //     console.log("Game state", state);
-    //     return state;
-    // }
+    async getGameState(gameId: string) {
+        const state = await httpPost(this.baseUrl + "/getGameState", { inviteCode: gameId }) as GameState;
+        console.log("Game state", state);
+        return state;
+    }
     //#endregion
 
     //#region socket
@@ -77,17 +77,9 @@ class ServiceSocket implements IServiceSocket {
         this.io.emit("test", message);
     }
 
-    onTestResponse(callback: (res: string) => void): void {
-        this.io.on("testResponse", callback);
+    nextQuestion(duration: number) {
+        this.io.emit("startNextRound", duration)
     }
-
-    onPlayerJoined(callback: (res: Player) => void): void {
-        this.io.on("playerJoined", callback);
-    }
-
-    // nextQuestion(duration: number) {
-    //     this.io.emit("startNextRound", duration)
-    // }
 
     // submitAnswer(index: number) {
     //     this.io.emit("submitAnswer", index)
@@ -97,18 +89,21 @@ class ServiceSocket implements IServiceSocket {
     //     this.io.emit("showFinalResult")
     // }
 
-    // onQuestionStart(callback: (question: Question) => void) {
-    //     this.io.on("roundQuestionReady", callback);
-    // }
+    onTestResponse(callback: (res: string) => void): void {
+        this.io.on("testResponse", callback);
+    }
 
-    // onQuestionComplete(callback: (questionResult: QuestionResult) => void) {
-    //     this.io.on("turnResultReady", callback);
-    // }
+    onPlayerJoined(callback: (res: Player) => void): void {
+        this.io.on("playerJoined", callback);
+    }
 
-    // onPlayerJoined(callback: (player: Player) => void) {
-    //     this.io.on("playerJoined", callback);
-    // }
+    onQuestionStart(callback: (question: Question) => void) {
+        this.io.on("roundQuestionReady", callback);
+    }
+
+    onQuestionComplete(callback: (questionResult: QuestionResult) => void) {
+        this.io.on("turnResultReady", callback);
+    }
 }
 
 export const service:IService = new Service();
-// export const service:IService = new ServiceMock();
