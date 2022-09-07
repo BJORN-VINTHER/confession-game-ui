@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column align-items-center">
     <button @click="onCreateGame">Host new game</button>
-    <button @click="onCreateTestGame">Host test game</button>
+    <button @click="onTestConnection">Test socket connection</button>
     <button @click="joinTestGame">player test game</button>
   </div>
 </template>
@@ -25,9 +25,14 @@ export default defineComponent({
       const gameId = await service.createGame();
       this.$router.push({ path: `/games/${gameId}/lobby` });
     },
-    onCreateTestGame() {
-      // const inviteCode = await service.createTestGame();
-      // this.$router.push({ path: `/games/${inviteCode}/lobby` });
+    async onTestConnection() {
+      await service.joinGame("1000", "Test user");
+      await service.connect("1000");
+      service.io.onTestResponse(message => {
+        console.log("Recieved server response: " + message)
+      })
+      service.io.testEmit("Client test message");
+      console.log("Sent message: " + "Client test message")
     },
     joinTestGame() {
       // const inviteCode = await service.joinTestGame();

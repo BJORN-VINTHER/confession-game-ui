@@ -39,6 +39,6 @@ export interface CreateGameResult {
 
 export interface Player {
     ip: string,
-    username: string,
+    name: string,
     gifUrl: string
 }
