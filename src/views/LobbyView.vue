@@ -22,7 +22,7 @@ export default defineComponent({
     await service.connect(gameId);
 
     service.io.onPlayerJoined((player) => {
-      console.log("onPlayerJoined", player);
+      console.log("Player joined game", player.name);
       this.players.push(player);
     });
   },
@@ -45,7 +45,7 @@ export default defineComponent({
         class="d-flex flex-1 player-name"
         v-for="player in players"
         :key="player.ip"
-        >{{ player.username }}</span
+        >{{ player.name }}</span
       >
     </div>
 

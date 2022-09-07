@@ -81,6 +81,10 @@ class ServiceSocket implements IServiceSocket {
         this.io.on("testResponse", callback);
     }
 
+    onPlayerJoined(callback: (res: Player) => void): void {
+        this.io.on("playerJoined", callback);
+    }
+
     // nextQuestion(duration: number) {
     //     this.io.emit("startNextRound", duration)
     // }

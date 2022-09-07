@@ -16,5 +16,5 @@ export interface IServiceSocket {
     // submitAnswer(index: number): void;
     // onQuestionStart(callback: (question: Question) => void): void;
     // onQuestionComplete(callback: (questionResult: QuestionResult) => void): void;
-    // onPlayerJoined(callback: (player: Player) => void): void;
+    onPlayerJoined(callback: (player: Player) => void): void;
 }
