@@ -24,7 +24,7 @@ export default defineComponent({
     async onCreateGame() {
       const gameId = await service.createGame();
       // await service.joinGame(gameId);
-      this.$router.push({ path: `/games/${gameId}/lobby` });
+      this.$router.push({ path: `/games/${gameId}/join` });
     },
     async onTestConnection() {
       await service.joinGame("1000", "Test user");

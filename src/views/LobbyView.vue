@@ -18,14 +18,21 @@ export default defineComponent({
     }
   },
   async mounted() {
-    const gameId = this.$route.params.gameId as string;
-    await service.connect(gameId);
+    await service.connect(this.gameId);
+
+    const gameState = await service.getGameState(this.gameId);
+    this.players = gameState.players;
 
     service.io.onPlayerJoined((player) => {
       console.log("Player joined game", player.name);
       this.players.push(player);
     });
   },
+  computed: {
+    gameId(): string {
+      return this.$route.params.gameId as string;
+    }
+  }
 })
 </script>
 

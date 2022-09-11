@@ -22,7 +22,7 @@ class Service implements IService {
     //#region http endpoints
 
     async createGame() {
-        const result = await httpPost(this.baseUrl + "/game", { ip: this.ip }) as CreateGameResult;
+        const result = await httpPost(this.baseUrl + "/games", { ip: this.ip }) as CreateGameResult;
         console.log("Created game: " + result.gameId);
         return result.gameId;
     }
@@ -33,12 +33,12 @@ class Service implements IService {
             ip: this.ip,
             gifUrl: ""
         }
-        await httpPost(`${this.baseUrl}/game/${gameId}/join`, player);
+        await httpPost(`${this.baseUrl}/games/${gameId}/join`, player);
         console.log("Joined game: " + gameId);
     }
     
     async getGameState(gameId: string) {
-        const state = await httpPost(this.baseUrl + "/getGameState", { inviteCode: gameId }) as GameState;
+        const state = await httpGet(`${this.baseUrl}/games/${gameId}/state`) as GameState;
         console.log("Game state", state);
         return state;
     }

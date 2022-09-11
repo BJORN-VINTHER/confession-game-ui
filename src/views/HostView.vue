@@ -46,7 +46,7 @@ export default defineComponent({
   async mounted() {
     const gameState = await service.getGameState(this.$route.params.gameId as string);
     await service.connect(this.$route.params.gameId as string);
-    this.totalQuestions = gameState.totalQuestions;
+    this.totalQuestions = gameState.totalRounds;
 
     service.io.onQuestionStart(async (question) => {
       console.log("Started question: ", question);

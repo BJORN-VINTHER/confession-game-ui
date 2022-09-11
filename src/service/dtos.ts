@@ -1,10 +1,10 @@
 
 export interface GameState {
-    host: string,
-    inviteCode: string,
-    currentQuestion: number,
-    totalQuestions: number,
-    playerScores: PlayerScore[]
+    gameId: string,
+    hostIp: string,
+    currentRounds: number,
+    totalRounds: number,
+    players: Player[]
 }
 
 export interface PlayerScore {
