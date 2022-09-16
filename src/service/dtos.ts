@@ -21,6 +21,18 @@ export interface Question {
     choices: string[]
 }
 
+export interface GameRound {
+    index: number,
+    master: Player,
+    question: Question,
+    answers: Answer[],
+}
+
+export interface GameRoundResult {
+    round: GameRound,
+    answers: Answer[],
+}
+
 export interface QuestionResult {
     correctAnswerIndex: number,
     answers: Answer[],
@@ -28,9 +40,8 @@ export interface QuestionResult {
 }
 
 export interface Answer {
-    playerIP: string,
-    userName: string,
-    answer: number
+    player: Player,
+    option: number
 }
 
 export interface CreateGameResult {

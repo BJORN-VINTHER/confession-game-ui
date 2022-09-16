@@ -1,6 +1,6 @@
 import { getIp, httpGet, httpPost } from "../utilities/utilities";
 import { io, Socket } from "socket.io-client";
-import type { CreateGameResult, GameState, Player, PlayerScore, Question, QuestionResult } from "./dtos";
+import type { CreateGameResult, GameRound, GameRoundResult, GameState, Player, PlayerScore, Question, QuestionResult } from "./dtos";
 import type { IService, IServiceSocket } from "./interfaces";
 // import { ServiceMock } from "./serviceMock";
 
@@ -16,6 +16,7 @@ class Service implements IService {
     async init() {
         console.log('Initializing service');
         this.ip = await getIp();
+        await this.connect();
         console.log('IP is: ' + this.ip);
     }
 
@@ -45,11 +46,11 @@ class Service implements IService {
     //#endregion
 
     //#region socket
-    async connect(gameId: string): Promise<IServiceSocket> {
+    async connect(): Promise<IServiceSocket> {
         return new Promise((resolve, reject) => {
             if (!this.io) {
                 console.log('Connecting to socket...');
-                const socket = io(this.baseUrl + `?gameId=${gameId}&ip=${this.ip}`).connect();
+                const socket = io(this.baseUrl + `?ip=${this.ip}`).connect();
                 socket.on('connect', () => {
                     console.log('Connection established');
                     resolve(this.io);
@@ -77,7 +78,7 @@ class ServiceSocket implements IServiceSocket {
         this.io.emit("test", message);
     }
 
-    nextQuestion(duration: number) {
+    nextRound(duration: number) {
         this.io.emit("startNextRound", duration)
     }
 
@@ -89,20 +90,20 @@ class ServiceSocket implements IServiceSocket {
     //     this.io.emit("showFinalResult")
     // }
 
-    onTestResponse(callback: (res: string) => void): void {
+    onTestResponse(callback: (x: string) => void): void {
         this.io.on("testResponse", callback);
     }
 
-    onPlayerJoined(callback: (res: Player) => void): void {
+    onPlayerJoined(callback: (x: Player) => void): void {
         this.io.on("playerJoined", callback);
     }
 
-    onQuestionStart(callback: (question: Question) => void) {
-        this.io.on("roundQuestionReady", callback);
+    onRoundStarted(callback: (x: GameRound) => void) {
+        this.io.on("roundStarted", callback);
     }
 
-    onQuestionComplete(callback: (questionResult: QuestionResult) => void) {
-        this.io.on("turnResultReady", callback);
+    onRoundEnded(callback: (x: GameRoundResult) => void) {
+        this.io.on("roundEnded", callback);
     }
 }
 

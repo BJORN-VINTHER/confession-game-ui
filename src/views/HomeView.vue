@@ -26,13 +26,13 @@ export default defineComponent({
       this.$router.push({ path: `/games/${gameId}/join` });
     },
     async onTestConnection() {
-      await service.joinGame("1000", "Test user");
-      await service.connect("1000");
-      service.io.onTestResponse(message => {
-        console.log("Recieved server response: " + message)
-      })
-      service.io.testEmit("Client test message");
-      console.log("Sent message: " + "Client test message")
+      // await service.joinGame("1000", "Test user");
+      // await service.connect();
+      // service.io.onTestResponse(message => {
+      //   console.log("Recieved server response: " + message)
+      // })
+      // service.io.testEmit("Client test message");
+      // console.log("Sent message: " + "Client test message")
     },
   }
 })

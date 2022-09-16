@@ -18,8 +18,6 @@ export default defineComponent({
     },
   },
   async mounted() {
-    await service.connect(this.gameId);
-
     const gameState = await service.getGameState(this.gameId);
     this.players = gameState.players;
 

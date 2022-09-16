@@ -6,7 +6,7 @@ import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 import { service } from "../service/service";
 import { defineComponent } from "vue";
-import type { Answer, Question, QuestionResult } from "@/service/dtos";
+import type { Answer, GameRound, GameRoundResult, Question, QuestionResult } from "@/service/dtos";
 
 export default defineComponent({
   components: {
@@ -22,7 +22,6 @@ export default defineComponent({
     // let questionTime: number = 6000;
     let totalQuestions: number = 0;
     let question: Question | undefined;
-    let questionResult: QuestionResult | undefined;
     let correctAnswer: string | undefined;
     let answers: Answer[] | undefined;
     let showTimer: boolean = false;
@@ -34,7 +33,6 @@ export default defineComponent({
       questionTime,
       totalQuestions,
       question,
-      questionResult,
       correctAnswer,
       answers,
       showTimer,
@@ -44,13 +42,12 @@ export default defineComponent({
   },
 
   async mounted() {
-    const gameState = await service.getGameState(this.$route.params.gameId as string);
-    await service.connect(this.$route.params.gameId as string);
+    const gameState = await service.getGameState(this.gameId);
     this.totalQuestions = gameState.totalRounds;
 
-    service.io.onQuestionStart(async (question) => {
-      console.log("Started question: ", question);
-      this.question = question;
+    service.io.onRoundStarted(async (round: GameRound) => {
+      console.log("Started question: ", round.question);
+      this.question = round.question;
       this.correctAnswer = undefined;
       this.fade = [];
       this.answers = undefined;
@@ -62,24 +59,30 @@ export default defineComponent({
       this.showchoices = true;
     });
 
-    service.io.onQuestionComplete(async (questionResult) => {
-      console.log("Completed question: ", questionResult);
-      this.answers = questionResult.answers;
+    service.io.onRoundEnded(async (roundResult: GameRoundResult) => {
+      console.log("Completed question: ", roundResult.round.question);
+      const masterIp = roundResult.round.master.ip;
+      const correctOption = roundResult.answers.find(x => x.player.ip === masterIp)?.option;
+      
+
+      this.answers = roundResult.answers;
       this.showTimer = false;
-      this.questionResult = questionResult;
-      this.correctAnswer = this.question!.choices[questionResult.correctAnswerIndex];
-      this.fade = [0, 1, 2, 3].filter((x) => x !== questionResult.correctAnswerIndex);
+      this.correctAnswer = roundResult.round.question.choices[correctOption as number];
+      this.fade = [0, 1, 2, 3].filter((x) => x !== correctOption);
     });
 
-    this.startNextQuestion();
+    this.startNextRound();
   },
   methods: {
-    async startNextQuestion() {
-      service.io.nextQuestion(this.questionTime);
+    async startNextRound() {
+      service.io.nextRound(this.questionTime);
     }
   },
   computed: {
-    answerColor() {
+    gameId():string {
+      return this.$route.params.gameId as string;
+    },
+    answerColor(): string | null {
       if (!this.question) {
         return null;
       }
@@ -97,8 +100,7 @@ export default defineComponent({
       }
       return null;
     },
-    confessionText() {
-      
+    confessionText():string {
       if (this.question && this.question.index > 0) {
         const index = this.question.index as number;
         const totalQuestions = this.totalQuestions as number;
@@ -142,7 +144,7 @@ export default defineComponent({
       />
     </template>
 
-    <button v-if="correctAnswer" @click="startNextQuestion()">
+    <button v-if="correctAnswer" @click="startNextRound()">
       Next
     </button>
   </div>
