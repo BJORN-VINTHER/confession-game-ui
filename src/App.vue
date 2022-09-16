@@ -35,7 +35,7 @@ export default defineComponent({
 }
 
 #app-container {
-  margin: 20px auto;
+  margin: 30px auto;
   max-width: 1200px;
   /* border: purple solid 10px; */
   font-weight: normal;

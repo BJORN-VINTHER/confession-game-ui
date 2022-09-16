@@ -5,9 +5,9 @@ import { service } from "../service/service";
 
 export default defineComponent({
   data() {
-    const players:Player[] = [];
+    const players: Player[] = [];
     return {
-      players
+      players,
     };
   },
   methods: {
@@ -15,7 +15,7 @@ export default defineComponent({
       this.$router.push({
         path: `/games/${this.$route.params.gameId}/overview`,
       });
-    }
+    },
   },
   async mounted() {
     await service.connect(this.gameId);
@@ -31,18 +31,20 @@ export default defineComponent({
   computed: {
     gameId(): string {
       return this.$route.params.gameId as string;
-    }
-  }
-})
+    },
+  },
+});
 </script>
 
 <template>
   <div class="d-flex flex-column align-items-center">
-    <h1>Lobby</h1>
+    <h1>Join game</h1>
 
     <a class="small-text">{{
       `https://green-sand-0c2c0b503.1.azurestaticapps.net/game/${$route.params.gameId}/join`
     }}</a>
+
+    <button class="mt-5" @click="startGame">Start game</button>
 
     <h4 style="margin-top: 50px">{{ players.length }} players joined</h4>
     <div
@@ -55,8 +57,6 @@ export default defineComponent({
         >{{ player.name }}</span
       >
     </div>
-
-    <button class="mt-5" @click="startGame">Start game</button>
   </div>
 </template>
 

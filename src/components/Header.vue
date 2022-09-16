@@ -7,9 +7,9 @@
     <div id="title" class="ml-4">
       {{ title }}
     </div>
-    <div id="ip-text" class="ml-4">
+    <!-- <div id="ip-text" class="ml-4">
       {{ ip }}
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -32,8 +32,8 @@ export default defineComponent({
 
 <style scoped>
 #header {
-  padding: 30px 20px;
-  font-size: 24pt;
+  padding: 20px 20px;
+  font-size: 20pt;
   background-color: white;
   color: #222;
 }

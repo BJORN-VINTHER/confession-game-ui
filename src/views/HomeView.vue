@@ -1,8 +1,7 @@
 <template>
   <div class="d-flex flex-column align-items-center">
     <button @click="onCreateGame">Host new game</button>
-    <button @click="onTestConnection">Test socket connection</button>
-    <button @click="joinTestGame">player test game</button>
+    <!-- <button @click="onTestConnection">Test socket connection</button> -->
   </div>
 </template>
 
@@ -35,11 +34,6 @@ export default defineComponent({
       service.io.testEmit("Client test message");
       console.log("Sent message: " + "Client test message")
     },
-    joinTestGame() {
-      // const inviteCode = await service.joinTestGame();
-      // await sleep(1000);
-      // this.$router.push({ path: `/games/${inviteCode}` });
-    }
   }
 })
 </script>
