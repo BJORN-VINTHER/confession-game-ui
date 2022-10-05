@@ -6,7 +6,7 @@ import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 import { service } from "../service/service";
 import { defineComponent } from "vue";
-import type { Answer, GameRound, GameRoundResult, Question, QuestionResult } from "@/service/dtos";
+import type { Answer, GameRound, GameRoundResult, GameState, Question, QuestionResult } from "@/service/dtos";
 
 export default defineComponent({
   components: {
@@ -16,10 +16,15 @@ export default defineComponent({
     Scores,
   },
   data() {
+    let round: GameRound | undefined;
+    let roundResult: GameRoundResult | undefined;
+    let gameState: GameState | undefined;
     let questionDelay: number = 4000;
     let questionTime: number = 20000;
     // let questionDelay: number = 500;
     // let questionTime: number = 6000;
+
+
     let totalQuestions: number = 0;
     let question: Question | undefined;
     let correctAnswer: string | undefined;
@@ -27,32 +32,42 @@ export default defineComponent({
     let showTimer: boolean = false;
     let fade: number[] = [];
     let showchoices: boolean = false;
+    let roundIndex: number = 0;
     
     return {
+      round,
+      roundResult,
+      gameState,
       questionDelay,
       questionTime,
-      totalQuestions,
-      question,
-      correctAnswer,
-      answers,
+
+
+      // totalQuestions,
+      // question,
+      // correctAnswer,
+      // answers,
       showTimer,
-      fade,
       showchoices,
+      fade,
     };
   },
 
   async mounted() {
-    const gameState = await service.getGameState(this.gameId);
-    this.totalQuestions = gameState.totalRounds;
+    await sleep(1000);
 
+    this.gameState = await service.getGameState(this.gameId);
+    
+    // this.totalQuestions = gameState.totalRounds;
     service.io.onRoundStarted(async (round: GameRound) => {
-      console.log("Started question: ", round.question);
-      this.question = round.question;
-      this.correctAnswer = undefined;
-      this.fade = [];
-      this.answers = undefined;
-      this.showTimer = false;
-      this.showchoices = false;
+      console.log("Started round: ", round);
+      this.round = round;
+      // this.question = round.question;
+      // this.correctAnswer = undefined;
+      // this.fade = [];
+      // this.answers = undefined;
+      // this.showTimer = false;
+      // this.showchoices = false;
+      // this.roundIndex = round.index;
 
       await sleep(this.questionDelay);
       this.showTimer = true;
@@ -63,48 +78,53 @@ export default defineComponent({
       console.log("Completed question: ", roundResult.round.question);
       const masterIp = roundResult.round.master.ip;
       const correctOption = roundResult.answers.find(x => x.player.ip === masterIp)?.option;
-      
+      this.roundResult = roundResult;
 
-      this.answers = roundResult.answers;
-      this.showTimer = false;
-      this.correctAnswer = roundResult.round.question.choices[correctOption as number];
-      this.fade = [0, 1, 2, 3].filter((x) => x !== correctOption);
+      // this.answers = roundResult.answers;
+      // this.showTimer = false;
+      // this.correctAnswer = roundResult.round.question.options[correctOption as number];
+      // this.fade = [0, 1, 2, 3].filter((x) => x !== correctOption);
     });
 
     this.startNextRound();
   },
   methods: {
     async startNextRound() {
-      service.io.nextRound(this.questionTime);
+      service.io.nextRound(this.gameId);
     }
   },
   computed: {
-    gameId():string {
+    gameId(): string {
       return this.$route.params.gameId as string;
     },
-    answerColor(): string | null {
-      if (!this.question) {
-        return null;
+    answerColor(): string | undefined {
+      switch (this.correctAnswerIndex) {
+        case 0:
+          return "red";
+        case 1:
+          return "orange";
+        case 2:
+          return "blue";
+        case 3:
+          return "green";
+        default:
+          return undefined;
       }
-      if (this.correctAnswer == this.question.choices[0]) {
-        return "red";
-      }
-      if (this.correctAnswer == this.question.choices[1]) {
-        return "orange";
-      }
-      if (this.correctAnswer == this.question.choices[2]) {
-        return "blue";
-      }
-      if (this.correctAnswer == this.question.choices[3]) {
-        return "green";
-      }
-      return null;
     },
-    confessionText():string {
-      if (this.question && this.question.index > 0) {
-        const index = this.question.index as number;
-        const totalQuestions = this.totalQuestions as number;
-        return `Confession ${index} / ${totalQuestions}`;
+    correctAnswerIndex(): number | undefined {
+      if (!this.roundResult) return undefined;
+
+      const masterIp = this.roundResult.round.master.ip;
+      return this.roundResult.answers.find(x => x.player.ip === masterIp)?.option;
+    },
+    correctAnswer(): string | undefined {
+      if (!this.correctAnswerIndex) return undefined;
+
+      return this.roundResult!.round.question.options[this.correctAnswerIndex];
+    },
+    confessionText(): string {
+      if (this.round && this.round.index > 0) {
+        return `Confession ${this.round.index} / ${this.gameState!.totalRounds}`;
       } else {
         return "Introduction";
       }
@@ -115,7 +135,7 @@ export default defineComponent({
 
 <template>
   <div class="d-flex flex-column align-items-center">
-    <template v-if="question">
+    <template v-if="round">
       <div>{{ confessionText }}</div>
       <Timer
         v-if="showTimer"
@@ -125,20 +145,21 @@ export default defineComponent({
       />
       <div v-else style="height: 32px; width: 10px"></div>
       <Quote
-        :question="question"
+        :question="round.question"
         :answer="correctAnswer"
         :color="answerColor"
+        :masterPlayerName="round.master.name"
       />
 
       <Scores
         v-if="true || fade.length > 0"
-        :correctAnswer="questionResult?.correctAnswerIndex"
+        :correctAnswer="correctAnswer"
       />
 
       <OptionButtonGrid
         v-if="showchoices"
         style="margin-top: 50px; height: 450px"
-        :choices="question.choices"
+        :choices="round.question.options"
         :disabled="true"
         :fade="fade"
       />

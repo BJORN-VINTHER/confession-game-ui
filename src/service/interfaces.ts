@@ -11,7 +11,7 @@ export interface IService {
 export interface IServiceSocket {
     testEmit(message: string): void;
     onTestResponse(callback: (res: string) => void): void;
-    nextRound(duration: number): void;
+    nextRound(gameId: string): void;
     // submitAnswer(index: number): void;
     onRoundStarted(callback: (x: GameRound) => void): void;
     onRoundEnded(callback: (x: GameRoundResult) => void): void;

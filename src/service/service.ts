@@ -78,8 +78,8 @@ class ServiceSocket implements IServiceSocket {
         this.io.emit("test", message);
     }
 
-    nextRound(duration: number) {
-        this.io.emit("startNextRound", duration)
+    nextRound(gameId: string) {
+        this.io.emit("nextRound", gameId)
     }
 
     // submitAnswer(index: number) {

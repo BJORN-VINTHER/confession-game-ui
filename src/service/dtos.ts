@@ -14,18 +14,14 @@ export interface PlayerScore {
 }
 
 export interface Question {
-    index: number,
-    questionText: string,
-    playerIP: string,
-    currentTurnPlayerName: string,
-    choices: string[]
+    text: string,
+    options: string[]
 }
 
 export interface GameRound {
     index: number,
     master: Player,
-    question: Question,
-    answers: Answer[],
+    question: Question
 }
 
 export interface GameRoundResult {

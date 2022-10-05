@@ -24,24 +24,35 @@
         src="../assets/icons/quote2.png"
       />
     </div>
-    </div>
+  </div>
   <!-- </div> -->
-  <div class="small-text">
-      - {{ question.currentTurnPlayerName }}
-    </div>
+  <div class="small-text">- {{ masterPlayerName }}</div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
+import type { PropType } from "vue";
+import type {
+  Answer,
+  GameRound,
+  GameRoundResult,
+  Question,
+  QuestionResult,
+} from "@/service/dtos";
 
 export default defineComponent({
-  props: ["question", "answer", "color"],
+  props: {
+    question: { type: Object as PropType<Question>, required: true },
+    answer: String,
+    color: String,
+    masterPlayerName: String
+  },
   computed: {
-    questionTextParts() {
-      return this.question.questionText.split("_");
+    questionTextParts(): string[] {
+      return this.question.text.split("_");
     },
   },
-})
+});
 </script>
 
 <style scoped>
