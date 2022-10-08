@@ -6,7 +6,7 @@ import Scores from "../components/Scores.vue";
 import OptionButtonGrid from "../components/OptionButtonGrid.vue";
 import { service } from "../service/service";
 import { defineComponent } from "vue";
-import type { Answer, GameRound, GameRoundResult, GameState, Question, QuestionResult } from "@/service/dtos";
+import type { GameRound, GameState } from "@/service/dtos";
 
 export default defineComponent({
   components: {
@@ -17,35 +17,16 @@ export default defineComponent({
   },
   data() {
     let round: GameRound | undefined;
-    let roundResult: GameRoundResult | undefined;
     let gameState: GameState | undefined;
-    let questionDelay: number = 4000;
-    let questionTime: number = 20000;
-    // let questionDelay: number = 500;
-    // let questionTime: number = 6000;
-
-
-    let totalQuestions: number = 0;
-    let question: Question | undefined;
-    let correctAnswer: string | undefined;
-    let answers: Answer[] | undefined;
+    let questionDelay: number = 2000;
     let showTimer: boolean = false;
     let fade: number[] = [];
     let showchoices: boolean = false;
-    let roundIndex: number = 0;
     
     return {
       round,
-      roundResult,
       gameState,
       questionDelay,
-      questionTime,
-
-
-      // totalQuestions,
-      // question,
-      // correctAnswer,
-      // answers,
       showTimer,
       showchoices,
       fade,
@@ -56,37 +37,25 @@ export default defineComponent({
     await sleep(1000);
 
     this.gameState = await service.getGameState(this.gameId);
-    
-    // this.totalQuestions = gameState.totalRounds;
     service.io.onRoundStarted(async (round: GameRound) => {
       console.log("Started round: ", round);
       this.round = round;
-      // this.question = round.question;
-      // this.correctAnswer = undefined;
-      // this.fade = [];
-      // this.answers = undefined;
-      // this.showTimer = false;
-      // this.showchoices = false;
-      // this.roundIndex = round.index;
 
       await sleep(this.questionDelay);
       this.showTimer = true;
       this.showchoices = true;
     });
 
-    service.io.onRoundEnded(async (roundResult: GameRoundResult) => {
-      console.log("Completed question: ", roundResult.round.question);
-      const masterIp = roundResult.round.master.ip;
-      const correctOption = roundResult.answers.find(x => x.player.ip === masterIp)?.option;
-      this.roundResult = roundResult;
+    service.io.onRoundEnded(async (round: GameRound) => {
+      console.log("Completed question: ", round.question);
+      const masterIp = round.master.ip;
+      const correctOption = round.answers.find(x => x.player.ip === masterIp)?.option;
+      this.round = round;
 
-      // this.answers = roundResult.answers;
-      // this.showTimer = false;
-      // this.correctAnswer = roundResult.round.question.options[correctOption as number];
-      // this.fade = [0, 1, 2, 3].filter((x) => x !== correctOption);
+      this.showTimer = false;
     });
 
-    this.startNextRound();
+    // this.startNextRound();
   },
   methods: {
     async startNextRound() {
@@ -112,15 +81,15 @@ export default defineComponent({
       }
     },
     correctAnswerIndex(): number | undefined {
-      if (!this.roundResult) return undefined;
+      if (!this.round || !this.round.answers) return undefined;
 
-      const masterIp = this.roundResult.round.master.ip;
-      return this.roundResult.answers.find(x => x.player.ip === masterIp)?.option;
+      const masterIp = this.round.master.ip;
+      return this.round.answers.find(x => x.player.ip === masterIp)?.option;
     },
     correctAnswer(): string | undefined {
       if (!this.correctAnswerIndex) return undefined;
 
-      return this.roundResult!.round.question.options[this.correctAnswerIndex];
+      return this.round!.question.options[this.correctAnswerIndex];
     },
     confessionText(): string {
       if (this.round && this.round.index > 0) {
@@ -141,7 +110,7 @@ export default defineComponent({
         v-if="showTimer"
         ref="timerComponent"
         class="mt-3"
-        :durationMillis="questionTime - questionDelay"
+        :durationMillis="gameState!.timePerRound * 1000 - questionDelay"
       />
       <div v-else style="height: 32px; width: 10px"></div>
       <Quote

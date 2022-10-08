@@ -1,4 +1,4 @@
-import type { GameRound, GameRoundResult, GameState, Player, Question, QuestionResult } from "./dtos";
+import type { GameRound, GameState, Player } from "./dtos";
 
 export interface IService {
     ip: string;
@@ -9,11 +9,9 @@ export interface IService {
 }
 
 export interface IServiceSocket {
-    testEmit(message: string): void;
-    onTestResponse(callback: (res: string) => void): void;
     nextRound(gameId: string): void;
-    // submitAnswer(index: number): void;
+    submitAnswer(gameId: string, playerIp: string, option: number): void;
     onRoundStarted(callback: (x: GameRound) => void): void;
-    onRoundEnded(callback: (x: GameRoundResult) => void): void;
+    onRoundEnded(callback: (x: GameRound) => void): void;
     onPlayerJoined(callback: (x: Player) => void): void;
 }

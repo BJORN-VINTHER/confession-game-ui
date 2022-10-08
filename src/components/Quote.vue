@@ -33,11 +33,7 @@
 import { defineComponent } from "vue";
 import type { PropType } from "vue";
 import type {
-  Answer,
-  GameRound,
-  GameRoundResult,
   Question,
-  QuestionResult,
 } from "@/service/dtos";
 
 export default defineComponent({

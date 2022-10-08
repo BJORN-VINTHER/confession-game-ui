@@ -1,5 +1,6 @@
 <template>
   <div
+  @click="onHome"
     id="header"
     class="d-flex flex-row justify-content-center align-items-center"
   >
@@ -25,6 +26,11 @@ export default defineComponent({
   props: {
     title: String,
     ip: String
+  },
+  methods: {
+    onHome() {
+      this.$router.push({ path: `/` });
+    },
   }
 }
 )

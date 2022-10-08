@@ -4,6 +4,7 @@ export interface GameState {
     hostIp: string,
     currentRounds: number,
     totalRounds: number,
+    timePerRound: number,
     players: Player[]
 }
 
@@ -21,18 +22,8 @@ export interface Question {
 export interface GameRound {
     index: number,
     master: Player,
-    question: Question
-}
-
-export interface GameRoundResult {
-    round: GameRound,
-    answers: Answer[],
-}
-
-export interface QuestionResult {
-    correctAnswerIndex: number,
-    answers: Answer[],
-    scores: PlayerScore[]
+    question: Question,
+    answers: Answer[]
 }
 
 export interface Answer {
