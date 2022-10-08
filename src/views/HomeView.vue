@@ -39,7 +39,7 @@ export default defineComponent({
       // simulate round 1
       this.$router.push({ path: `/games/${gameId}/overview` });
       await sleep(500);
-      await httpPost(`${baseUrl}/games/${gameId}/simulate-round`, {});
+      // await httpPost(`${baseUrl}/games/${gameId}/simulate-round`, {});
     },
   }
 })

@@ -22,6 +22,7 @@ export default defineComponent({
     let showTimer: boolean = false;
     let fade: number[] = [];
     let showchoices: boolean = false;
+    let roundEnded: boolean = true;
     
     return {
       round,
@@ -30,16 +31,35 @@ export default defineComponent({
       showTimer,
       showchoices,
       fade,
+      roundEnded
     };
   },
 
   async mounted() {
-    await sleep(1000);
+    await sleep(500);
 
     this.gameState = await service.getGameState(this.gameId);
+
+    this.showchoices = true;
+    this.round = {
+      index: -1,
+      master: this.gameState.players.find(x => x.ip === this.gameState!.hostIp)!,
+      answers: undefined,
+      question: {
+        text: "My goal of todays session is _",
+        options: [
+          "for us to learn something about each other and have a good time",
+          "to serve as a basis for your performance evaluation",
+          "for me to learn English",
+          "to make you help me debug my code"
+        ]
+      }
+    };
+
     service.io.onRoundStarted(async (round: GameRound) => {
       console.log("Started round: ", round);
       this.round = round;
+      this.roundEnded = false;
 
       await sleep(this.questionDelay);
       this.showTimer = true;
@@ -47,11 +67,11 @@ export default defineComponent({
     });
 
     service.io.onRoundEnded(async (round: GameRound) => {
-      console.log("Completed question: ", round.question);
-      const masterIp = round.master.ip;
-      const correctOption = round.answers.find(x => x.player.ip === masterIp)?.option;
+      console.log("Completed round: ", round);
+      // const masterIp = round.master.ip;
+      // const correctOption = round.answers.find(x => x.player.ip === masterIp)?.option;
       this.round = round;
-
+      this.roundEnded = true;
       this.showTimer = false;
     });
 
@@ -81,7 +101,7 @@ export default defineComponent({
       }
     },
     correctAnswerIndex(): number | undefined {
-      if (!this.round || !this.round.answers) return undefined;
+      if (!this.round || !this.round.answers || this.round.answers.length === 0) return undefined;
 
       const masterIp = this.round.master.ip;
       return this.round.answers.find(x => x.player.ip === masterIp)?.option;
@@ -92,7 +112,7 @@ export default defineComponent({
       return this.round!.question.options[this.correctAnswerIndex];
     },
     confessionText(): string {
-      if (this.round && this.round.index > 0) {
+      if (this.round && this.round.index >= 0) {
         return `Confession ${this.round.index} / ${this.gameState!.totalRounds}`;
       } else {
         return "Introduction";
@@ -121,21 +141,22 @@ export default defineComponent({
       />
 
       <Scores
-        v-if="true || fade.length > 0"
-        :correctAnswer="correctAnswer"
+        v-if="correctAnswerIndex"
+        :correctAnswerIndex="correctAnswerIndex"
+        :answers="round.answers!"
       />
 
       <OptionButtonGrid
         v-if="showchoices"
         style="margin-top: 50px; height: 450px"
-        :choices="round.question.options"
+        :options="round.question.options"
         :disabled="true"
-        :fade="fade"
+        :correctAnswerIndex="correctAnswerIndex"
       />
     </template>
 
-    <button v-if="correctAnswer" @click="startNextRound()">
-      Next
+    <button v-if="roundEnded" @click="startNextRound()">
+      {{ round && round.index >= 0 ? "Next" : "Start" }}
     </button>
   </div>
 </template>

@@ -23,7 +23,7 @@ export interface GameRound {
     index: number,
     master: Player,
     question: Question,
-    answers: Answer[]
+    answers: Answer[] | undefined
 }
 
 export interface Answer {
